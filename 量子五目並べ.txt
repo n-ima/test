@@ -21,7 +21,7 @@ const boardSize = 400;
 let board, board_observe, checkboard, MASU;
 let txt_explain, txt_explain_English, txt_title;
 let count_black, count_white;
-
+aaaaaaaaaa
 
 function setup(){
     createCanvas(900, 700);
