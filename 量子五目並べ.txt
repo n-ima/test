@@ -26,7 +26,7 @@ ooooooo
 
 
 function setup(){
-    createCanvas(900, 700);
+    createCanvas(windowWidth, windowHeight);
     colorMode(RGB);
     basic_color = color(255, 215, 0);
     observe_color = color(50, 205, 50);
@@ -280,6 +280,10 @@ function draw(){
       text(txt, 200, 435);
     }
   }
+}
+//ウィンドウサイズが変更されたときにキャンバスをリサイズする関数
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 //キーが押されたときの実行内容を指定する関数
 function keyPressed(){
