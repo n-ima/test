@@ -5,6 +5,8 @@ let d2, black10_abc2, black10_num2, black30_abc2, black30_num2, black70_abc2, bl
 let p10, p30, p70, p90;
 let txt, txt_arr;
 let enter, esc, Delete, rightArrow, leftArrow, esc2, shift, startGame;
+let btnSmall, btnMedium, btnLarge;
+let boardSizeN = 40; // 選択中の1マス幅: 40=9×9, 28=13×13, 24=15×15
 let abc = [];
 for (let i = 'A'.charCodeAt(0); i <= 'Z'.charCodeAt(0); i++) {abc.push(String.fromCharCode(i));}//アルファベットの配列を作る(実はこれ二度手間)
 let black10, black30, black70, black90;
@@ -46,6 +48,13 @@ function setup(){
     //ボタンを作る
     startGame =createButton("'ENTER' or click HERE to PLAY!").position(310, 490).mousePressed(start_Game);
     startGame.style('background-color', 'white').style('width', '220px').style('height', '40px').style('font-size', '14px');
+    //盤面サイズ選択ボタン
+    btnSmall  = createButton("Small\n9×9").position(265, 445).mousePressed(() => { boardSizeN = 40; });
+    btnSmall.style('width', '80px').style('height', '40px').style('font-size', '13px');
+    btnMedium = createButton("Medium\n13×13").position(355, 445).mousePressed(() => { boardSizeN = 28; });
+    btnMedium.style('width', '80px').style('height', '40px').style('font-size', '13px');
+    btnLarge  = createButton("Large\n15×15").position(445, 445).mousePressed(() => { boardSizeN = 24; });
+    btnLarge.style('width', '80px').style('height', '40px').style('font-size', '13px');
     shift = createButton("'Shift'" + "\n" + "送信").position(260, 415).mousePressed(send);//シフトで送信ボタン
     shift.style('background-color', '#DDDDDD').style('width', '60px').style('height', '40px').style('font-size', '13px');
     enter      = createButton("'ENTER'・・・・観測(observe)").position(0, 500).mousePressed(startObserve);
@@ -106,9 +115,15 @@ function draw(){
       Delete.show(); rightArrow.show(); leftArrow.show(); esc2.show();
       enter.hide(); esc.hide(); shift.show(); startGame.hide();
     }
+    btnSmall.hide(); btnMedium.hide(); btnLarge.hide();
   }
   else{
     startGame.show(); enter.hide(); esc.hide(); Delete.hide(); rightArrow.hide(); leftArrow.hide(); esc2.hide(); shift.hide();
+    btnSmall.show(); btnMedium.show(); btnLarge.show();
+    //選択中のサイズボタンを強調表示
+    btnSmall.style('background-color',  boardSizeN === 40 ? '#FFD700' : '#DDDDDD');
+    btnMedium.style('background-color', boardSizeN === 28 ? '#FFD700' : '#DDDDDD');
+    btnLarge.style('background-color',  boardSizeN === 24 ? '#FFD700' : '#DDDDDD');
   }
   //最初の説明
   if(explain){
@@ -119,6 +134,9 @@ function draw(){
     text(txt_explain_English, 3 * width / 4 - 10, (height-70)/2);
     textAlign(CENTER, CENTER); noStroke(); fill(0); textSize(50);
     text(txt_title, width/2, 70);
+    //盤面サイズ選択ラベル
+    textAlign(CENTER, CENTER); noStroke(); fill(0); textSize(15);
+    text("盤面サイズを選択 / Select Board Size:", width/2, 430);
     //説明に図を追加
     explainPicture();
   }
@@ -388,7 +406,25 @@ function send(){
 }
 //ゲームを開始する関数
 function start_Game(){
-  if(explain){explain = false;}
+  if(explain){
+    explain = false;
+    //選択された盤面サイズでゲーム状態をリセット
+    n = boardSizeN;
+    margin = n * 3/4;
+    d = []; txt_arr = [];
+    count = 0; count2 = 0;
+    p10 = 0; p30 = 0; p70 = 0; p90 = 0;
+    black10 = []; black30 = []; black70 = []; black90 = [];
+    black10_split = []; black30_split = []; black70_split = []; black90_split = [];
+    black10_abc = []; black10_num = [];
+    black30_abc = []; black30_num = [];
+    black70_abc = []; black70_num = [];
+    black90_abc = []; black90_num = [];
+    observe = false; random = false; duplicate = false;
+    MASU = int(boardSize / (n * (2/5 + 3/4))) + 1;
+    board = Array(MASU+1).fill().map(() => Array(MASU+1).fill(null));
+    board_observe = Array(MASU+1).fill().map(() => Array(MASU+1).fill(null));
+  }
 }
 //観測を開始する関数
 function startObserve(){
@@ -476,7 +512,6 @@ function convertToInt(a) {
 }
 //盤面をコピーする関数(引数はメイン盤面との距離)
 function Duplicate_board(m){
-  n = boardSize / 10;
   observe_color = color(50, 205, 50);
 
 
